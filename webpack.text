@@ -1,0 +1,17 @@
+1. vue文件中引入mp3文件：
+方法1： 直接将mp3文件放置dist static中 <audio src="static/example.mp3"></audio>
+方法2： 在webpack.base.conf.js中 添加配置项
+        {
+          test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            name: assetsPath('media/[name].[hash:7].[ext]')
+          }
+        },
+        在vue-loader.conf.js中添加配置项
+        transformToRequire: {
+          "audio": "src"
+        }
+        <audio src="../../example.mp3"></audio> src为相对路径
+
