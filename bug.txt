@@ -1,0 +1,2 @@
+1.audio在ios上加载完成后无法播放，进度条不动
+2.ios framework-vue的下拉框，默认项点击确定无法选中

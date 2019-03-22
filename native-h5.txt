@@ -1,0 +1,35 @@
+原生与h5交互的一些心得：
+
+1.对原生方法调用的统一处理
+2.统一处理原生回调后的数据
+
+发布订阅模式：
+
+es6 观察者模式
+class Observer{
+  constructor(){
+    this.handlers = []
+  },
+  addSubscribe(topic, fn){
+    this.handlers.push({topic: topic, fn: fn})
+  },
+  removeSubscribe(topic, fn){
+    this.handlers.forEach((item, index) => {
+      if(item.topic == topic){
+        this.handlers.splice(index, 1);
+      }
+    })
+  },
+  publish(topic, message){
+    this.handlers.forEach((item, index) => {
+      if(item.topic == topic){
+        item.fn(message);
+      }
+    })
+  }
+}
+export default new Observer();
+
+
+
+
