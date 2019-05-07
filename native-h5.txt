@@ -32,4 +32,71 @@ export default new Observer();
 
 
 
+//h5与原生交互
+一、未引入jsBridge或者webviewJavascriptBridge
+1、h5和ios 通信
+1.1 原生调用h5: ios可以访问webview全局对象（window对象下的属性），只要将js方法暴露到window对象下面，ios便可以调用h5方法
+1.2 js调用ios方法： 
+    1.2.1 利用ios的UIwebview组件特性。在UIwebview内发起的所有网络请求都可以通过delegate函数在Native层得到通知。例如h5中的url跳转
+          ，可以通过和原生约定url值的格式。当原生拦截到请求时，webview不进行跳转，进行业务逻辑处理。原生可以处理后返回的数据直接挂在到window的某个属性下面，
+          h5通过属性名取得原生返回的数据
+          1.2.1-1 拦截url跳转实现方式： window.location.href： 缺点是多次修改href的值在native层只能收到最后一次请求，之前的请求被忽略
+          1.2.2-2 利用ifame,取到数据后，移除iframe
+    1.2.2 利用    window.webkit.messageHandlers[MethodName].postMessage(params)  
+
+2. h5和安卓 通信    
+2.1 安卓调用js： 安卓利用webview.loadUrl()方法调用js方法 不用暴露在window下面
+2.2 js调用安卓： 
+    2.2.1 可以使用schema方式，也就是url方式
+    2.2.2 安卓创建原生方法直接注入到window对象下， js直接调用
+    2.2.3 使用prompt, console.log(), alert 这三个方法在js里属于原生。原生可以抓到这些方法里面的参数
+
+3. js调用原生方法，兼容ios和安卓
+   JsBridge = {
+     handle: function(fnName, data, cb){
+       var _this = this;
+       if(_this.lastCallTime && (Date.now() - _this.lastCallTime) < 100){
+         setTimeout(function(){
+           _this.doCall(fnName, data, callback);
+         }, 100);
+         return;
+       }
+       this.lastCallTime = Date.now();
+       data = data || {};
+       if(data){
+         $.extend(data, {callback: cb});
+       }
+       if(UA.isIOS()){
+         $.each(data, function(key, value){
+           if($.isPlainObject(value) || $.isArray(value){
+             data[key] = JSON.stringify(value);
+           }
+         });
+         var url = Args.addParameter('JsBridge//' + functionName, data);
+         var iframe = document.createElement('iframe');
+         iframe.style.width = '1px';
+         iframe.style.height = '1px';
+         iframe.style.display = 'none';
+         iframe.src = url;
+         document.body.appendChild(iframe);
+         setTimeout(function(){
+           iframe.remove();
+         },100)
+       }else if(UA.isAndroid()){
+         window.androidJS && window.androidJS[fnName] && window.androidJS[fnName](JSON.stringify(data))
+       }else{
+         console.log(error);
+       }
+
+     }
+   }
+
+二、使用jsBridge（android）和 WebViewJavascriptBridge（ios）库
+
+https://github.com/lzyzsd/JsBridge.git
+
+https://github.com/marcuswestin/WebViewJavascriptBridge
+
+
+
 
