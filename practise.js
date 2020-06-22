@@ -76,23 +76,23 @@ setTimeout(function() {
  */
 
 
-alert(a);
-a();
-var a= 3; 
-function a(){
-    alert(10)
-};
-alert(a);
-a=6;
-a();
-
-var getName = function() {
-    console.log(4);
-  };
-  function getName() {
-    console.log(5);
-  }
-  getName();  //4
+// alert(a);
+// a();
+// var a= 3;
+// function a(){
+//     alert(10)
+// };
+// alert(a);
+// a=6;
+// a();
+//
+// var getName = function() {
+//     console.log(4);
+//   };
+//   function getName() {
+//     console.log(5);
+//   }
+//   getName();  //4
 
 /**
  * 解析：
@@ -132,15 +132,166 @@ Function.prototype.myBind = function(context){
         throw new Error('not a function');
     }
     var self = this;
-    var args = Array.prototype.slice.call(arguments, 1);
-    var fNop = function() {};
-    var fbound = function() {
-        self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)));
+    var fn = [].shift.call(arguments)
+    var args = Array.prototype.slice.call(arguments);
+    return function () {
+        self.apply(fn, [].concat(args, Array.prototype.slice.call(arguments)));
+
     }
-    fNop.prototype = this.prototype;
-    fbound.prototype = new fNOP();
-    return fbound;
 }
+
+// 实现一个new
+ function myNew() {
+    const Fn = [].shift.call(arguments);
+    const args = [].slice.call(arguments);
+    const obj = Object.create(Fn.prototype);
+    fn.apply(obj, args);
+    return obj instanceof Object ? obj : {}
+ }
+
+ function myNew2() {
+    const obj = {};
+    const Fn = [].shift.call(arguments);
+    const args = [].slice.call(arguments);
+    obj._proto_ = Fn.prototype;
+    fn.call(obj, args);
+    return obj instanceof Object ? obj : {};
+ }
+
+
+ function Foo() {
+    getName = function () {
+        console.log('sjj')
+    }
+    return this
+ }
+  Foo.getName = function() {
+    console.log('sjj1')
+  }
+  var getName  = function () {
+      console.log('sjj2')
+  }
+   function  getName() {
+    console.log('sjj3')
+
+   }
+   Foo.prototype.getName = function () {
+       console.log('sjj4')
+   }
+   Foo.getName();
+   getName();
+   Foo().getName();
+   getName();
+   new Foo.getName();
+   new Foo().getName();
+   new new Foo().getName();
+
+
+
+   // 创建对象的几种方式
+// 寄生构造继承
+function Person () {
+    var o = new Object();
+    o.name = 'sjj';
+    o.getName = function () {
+        console.log(this.name)
+    };
+    return o;
+}
+
+// 原型继承
+
+// 原型链继承
+
+// 构造函数继承
+
+
+//promise
+ function MyPromise(constructor) {
+    this.state = pending;
+    this.result = '';
+    this.reason = '';
+    function resolve(value) {
+        if(this.state == pending){
+            this.status = 'resolved';
+            this.result = value;
+
+        }
+
+    };
+    function rejecte(value) {
+        this.reason = value;
+        this.status = 'rejected'
+
+    };
+    try{
+        constructor(resolve, rejecte)
+    }catch(e){
+
+    }
+
+ }
+
+ MyPromise.prototype.then = function(onResolved, onrejected){
+    let self = this;
+    switch (self.status) {
+        case 'resolved':
+            onResolved(self.result);
+            break;
+        case 'rejected':
+            onrejected(self.reason);
+            break;
+    }
+
+}
+
+
+// var x=2;
+// var y = {
+//     x: 3,
+//     z: (function(x){
+//         this.x*=x;
+//         x+=2;
+//         return function (n) {
+//             this.x*=x;
+//             x+=3;
+//             console.log(x)
+//         }
+//     })(x)
+// }
+
+//
+// var x= 0;
+// var y =1;
+// function fn() {
+//     x+=2;
+//     fn = function (y) {
+//         console.log(y + (--x));
+//
+//     }
+//     console.log(x, y, '111');
+// }
+// fn(3);
+// fn(4);
+
+
+// 作用域与作用域链
+// 作用域是函数执行上下文的抽象概念
+// 作用域链 是函数执行上下文的集合
+
+
+//es5 之后的执行上下文： 词法环境、变量环境、this、outer
+// 绑定this， 创建词法环境组建，创建变量环境组建
+
+
+// 原型和原型链
+
+//继承
+
+
+// eventLoop
+
+//
 
 
 

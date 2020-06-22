@@ -76,3 +76,94 @@ console.log(instance2.colors);
 * 在超类型中定义的方法，子类型不可见，结果所有类型都只能使用构造函数模式
 
 
+
+## js执行机制
+### Event Loop
+* 主线程自上而下执行所有代码
+* 同步任务直接进入到主线程中执行，异步任务进入到Event Table中并注册相应回调函数
+* 异步任务完成后，Event Table 将这个回调函数移入Event queue
+* 主线程任务执行结束后， 读取event queue中的任务， 进入主线程去执行
+
+#### 宏任务
+* js 同步代码、setTimeout、setInterval、 I/O、 UIrending
+#### 微任务
+* promise.then , promise.catch, promise.finally
+
+```js
+console.log('1');
+
+setTimeout(function() {
+    console.log('2');
+    process.nextTick(function() {
+        console.log('3');
+    })
+    new Promise(function(resolve) {
+        console.log('4');
+        resolve();
+    }).then(function() {
+        console.log('5')
+    })
+})
+process.nextTick(function() {
+    console.log('6');
+})
+new Promise(function(resolve) {
+    console.log('7');
+    resolve();
+}).then(function() {
+    console.log('8')
+})
+
+setTimeout(function() {
+    console.log('9');
+    process.nextTick(function() {
+        console.log('10');
+    })
+    new Promise(function(resolve) {
+        console.log('11');
+        resolve();
+    }).then(function() {
+        console.log('12')
+    })
+})
+
+## 执行上下文
+* 执行上下文是评估js代码执行环境的抽象概念
+* 有函数调用就会创建上下文。
+* 执行上下文分为： 全局上下文、函数上下文、 eval
+* js代码在执行栈中后进先出
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f();
+}
+checkscope();
+```
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f;
+}
+checkscope()();
+```
+### 执行上下文的三个重要属性
+* 变量对象
+* 作用域链
+* this
+
+## 作用域链
+* 查找变量时，会从上下文开始查找
+* 查找不到，就从父级上下文开始查找，一直查找到全局上下文的变量对象，也就是全局对象
+* 这样由多个执行上下文变量对象构成的链表就叫作用域链
+
+
