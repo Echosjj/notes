@@ -70,7 +70,7 @@ padding-bottom: 0;
   text-transform: uppercase;
   background-color: #eee;
   right: 30%;
-  isplay: block;
+  display: block;
   font-size: 1.5rem;
   overflow: hidden;
   padding: 1em;
@@ -95,3 +95,125 @@ padding-bottom: 0;
   text-transform: uppercase;
 }
 ```
+
+#### 避免低效率选择器
+
+##### 选择器的效率从高到低
+
+1. id选择器（#myid）
+2. 类选择器（.myclassname) 
+3. 标签选择器（div,h1,p) 
+4. 相邻选择器（h1+p）
+5. 子选择器（ul < li) 
+6. 后代选择器（li a) 
+7. 通配符选择器（*） 
+8. 属性选择器（a[rel="external"]） 
+9. 伪类选择器（a:hover,li:nth-child）
+
+* 尽量避免选择器的深层嵌套， 大于3层就考虑是否有必要
+
+#### 模块化
+
+* 利用less 和sass 提供的连接符 &- 完成 （现有项目中有用到）
+
+* 推荐
+
+```js
+
+.m-detail {
+	background: #fff;
+	color: #333;
+	&-hd {
+		padding: 5px 10px;
+		background: #eee;
+		.title {
+			background: #eee;
+		}
+	}
+	&-bd {
+		padding: 10px;
+		.info {
+			font-size: 14px;
+			text-indent: 2em;
+		}
+	}
+	&-ft {
+		text-align: center;
+		.more {
+			color: blue;
+		}
+	}
+}
+
+```
+* 编译后
+```js 
+.m-detail {
+	background: #fff;
+	color: #333;
+}
+.m-detail-hd {
+	padding: 5px 10px;
+	background: #eee;
+}
+.m-detail-hd .title {
+	background: #eee;
+}
+.m-detail-bd {
+	padding: 10px;
+}
+.m-detail-bd .info {
+	font-size: 14px;
+	text-indent: 2em;
+}
+.m-detail-ft {
+	text-align: center;
+}
+.m-detail-ft .more {
+	color: blue;
+}
+
+```
+
+
+#### 规则和分号
+* 每条规则后面加上分号结束
+* 群组选择器换行
+
+```js
+.m-detail {
+	background: #fff;
+	color: #333;
+}
+```
+```js
+.m-detail,
+.m-content,
+.m-footer {
+	background: #fff;
+	color: #333;
+}
+```
+
+
+#### 路径引用
+* background-image的url 路径可以省略掉引号
+* 在现有项目中 可使用别名@ 和stylus-loader中的～（相对路径） 完成地址的引用
+
+* 不推荐
+```js
+
+ background-image: url('../../../assets/images/order/icon_one-way.png');
+ 
+```
+* 推荐
+```js 
+
+background-image: url(~@consumRecord/views/assets/images/icon_check_box_normal@3x.png);
+
+```
+
+
+
+
+
